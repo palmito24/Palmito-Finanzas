@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Palmito" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <title>Palmito Finanzas</title>
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23000'/%3E%3Ctext x='50' y='72' font-family='system-ui,sans-serif' font-size='60' font-weight='bold' text-anchor='middle' fill='%23f97316'%3EP%3C/text%3E%3C/svg%3E" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23000'/%3E%3Ctext x='90' y='130' font-family='system-ui,sans-serif' font-size='110' font-weight='bold' text-anchor='middle' fill='%23f97316'%3EP%3C/text%3E%3C/svg%3E" />
+  <link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22Palmito%20Finanzas%22%2C%22short_name%22%3A%22Palmito%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23000000%22%2C%22theme_color%22%3A%22%23000000%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20512%20512%27%253E%253Crect%20width%3D%27512%27%20height%3D%27512%27%20rx%3D%27100%27%20fill%3D%27%2523000%27%2F%253E%253Ctext%20x%3D%27256%27%20y%3D%27370%27%20font-family%3D%27system-ui%27%20font-size%3D%27320%27%20font-weight%3D%27bold%27%20text-anchor%3D%27middle%27%20fill%3D%27%2523f97316%27%253EP%253C%2Ftext%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAAwVZ31a3oKYFMtSmDYitHLngXG70myr4",
+      authDomain: "palmito-finanzas.firebaseapp.com",
+      projectId: "palmito-finanzas",
+      storageBucket: "palmito-finanzas.firebasestorage.app",
+      messagingSenderId: "1051833458916",
+      appId: "1:1051833458916:web:5cd2ebdaafdb5b9397ccf1",
+      databaseURL: "https://palmito-finanzas-default-rtdb.firebaseio.com"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const fbAuth = firebase.auth();
+    const fbDb = firebase.database();
+  </script>
+
+  <style>
+    html, body { margin: 0; padding: 0; background: #000; color: #fff; overscroll-behavior-y: contain; }
+    * { -webkit-tap-highlight-color: transparent; }
+    input { font-size: 16px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" data-presets="env,react">
+    const { useState, useEffect, useRef, useCallback } = React;
+
+    const Icon = ({ d, size = 16, className = '', stroke = 'currentColor', fill = 'none', strokeWidth = 2 }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke={stroke} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <g dangerouslySetInnerHTML={{__html: d}} />
+      </svg>
+    );
+    const Plus = (p) => <Icon d='<path d="M12 5v14"/><path d="M5 12h14"/>' {...p} />;
+    const Edit2 = (p) => <Icon d='<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>' {...p} />;
+    const Trash2 = (p) => <Icon d='<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>' {...p} />;
+    const ChevronLeft = (p) => <Icon d='<path d="m15 18-6-6 6-6"/>' {...p} />;
+    const ChevronRight = (p) => <Icon d='<path d="m9 18 6-6-6-6"/>' {...p} />;
+    const ChevronDown = (p) => <Icon d='<path d="m6 9 6 6 6-6"/>' {...p} />;
+    const Settings = (p) => <Icon d='<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2Z"/><circle cx="12" cy="12" r="3"/>' {...p} />;
+    const X = (p) => <Icon d='<path d="M18 6 6 18"/><path d="m6 6 12 12"/>' {...p} />;
+    const Check = (p) => <Icon d='<path d="M20 6 9 17l-5-5"/>' {...p} />;
+    const Loader2 = (p) => <Icon d='<path d="M21 12a9 9 0 1 1-6.219-8.56"/>' {...p} />;
+    const Wallet = (p) => <Icon d='<path d="M19 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a2 2 0 0 0-2-2"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>' {...p} />;
+    const TrendingUp = (p) => <Icon d='<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>' {...p} />;
+    const CreditCard = (p) => <Icon d='<rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/>' {...p} />;
+    const PiggyBank = (p) => <Icon d='<path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8.8 3.4 2 4.5V17a2 2 0 0 0 4 0v-.5c.5.1 1 .2 1.5.2V17a2 2 0 0 0 4 0v-1.8c1.9-1.5 2.9-3.5 3-5.7h.4a2 2 0 0 0 1.6-1c.1-.2.4-1 .4-1.9-.1-.8-.5-1.2-.9-1.6Z"/><path d="M2 9v1c0 1.1.9 2 2 2h1"/><path d="M16 11h0"/>' {...p} />;
+    const DollarSign = (p) => <Icon d='<line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>' {...p} />;
+    const Copy = (p) => <Icon d='<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>' {...p} />;
+    const Lock = (p) => <Icon d='<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>' {...p} />;
+    const CircleDollarSign = (p) => <Icon d='<circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/>' {...p} />;
+    const ArrowDownRight = (p) => <Icon d='<path d="m7 7 10 10"/><path d="M17 7v10H7"/>' {...p} />;
+    const LogOut = (p) => <Icon d='<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/>' {...p} />;
+    const Cloud = (p) => <Icon d='<path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>' {...p} />;
+
+    const MONTHS_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    const STORAGE_KEY = 'palmito_finanzas_v2';
+    const fmt = (n) => {
+      if (n === null || n === undefined || isNaN(n)) return '$0';
+      const r = Math.round(n); const abs = Math.abs(r).toLocaleString('es-AR');
+      return r < 0 ? `-$${abs}` : `$${abs}`;
+    };
+    const fmtUsd = (n) => {
+      if (n === null || n === undefined || isNaN(n)) return 'US$0';
+      const r = Math.round(n); const abs = Math.abs(r).toLocaleString('es-AR');
+      return r < 0 ? `-US$${abs}` : `US$${abs}`;
+    };
+    const uid = () => Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+    const monthKey = (y, m) => `${y}-${String(m+1).padStart(2,'0')}`;
+    const parseKey = (k) => { const [y,m] = k.split('-'); return { year: parseInt(y), month: parseInt(m)-1 }; };
+    const monthLabel = (k) => { const {year, month} = parseKey(k); return `${MONTHS_ES[month]} ${year}`; };
+    const nextMonthKey = (k) => { const { year, month } = parseKey(k); const d = new Date(year, month + 1, 1); return monthKey(d.getFullYear(), d.getMonth()); };
+    const prevMonthKey = (k) => { const { year, month } = parseKey(k); const d = new Date(year, month - 1, 1); return monthKey(d.getFullYear(), d.getMonth()); };
+
+    const initialState = () => {
+      const now = new Date();
+      return {
+        config: {
+          dolar_valor: 1450,
+          cajas_pesos: [
+            { id: 'bna', name: 'BNA' },
+            { id: 'mp', name: 'Mercado Pago' },
+            { id: 'efectivo', name: 'Efectivo' },
+            { id: 'billetera', name: 'Billetera física' }
+          ],
+          cajas_dolares: [
+            { id: 'mp_usd', name: 'Mercado Pago USD' },
+            { id: 'bna_usd', name: 'BNA USD' },
+            { id: 'dolar_crypto', name: 'Dólar Crypto' },
+            { id: 'efectivo_usd', name: 'Efectivo USD' },
+            { id: 'paypal', name: 'PayPal' }
+          ],
+          tarjetas: [],
+          ingresos_fijos: [], deudores_fijos: [], estructura_fijos: [],
+          egresos_dolares_fijos: [],
+          ahorros_fijos: [{ id: 'ahorro_mes', name: 'Ahorro del mes', monto: 0 }],
+          tarjetas_consumos: []
+        },
+        meses: {},
+        current: monthKey(now.getFullYear(), now.getMonth())
+      };
+    };
+
+    const emptyMonth = () => ({
+      cajas_pesos: {}, cajas_dolares: {},
+      ingresos: [], deudores: [], extras: [],
+      gastos_estructura: [], gastos_personal: [], gastos_extras: [],
+      egresos_dolares: [], ahorros: [], inversiones: [],
+      ajustes_ocasionales: [],
+      fijos_snapshot: {}, pagos: {},
+      ahorro_dolares_usd: 0,
+      ahorro_dolares_realizado: false,
+      ahorro_dolares_caja_pesos: null,
+      ahorro_dolares_caja_usd: null,
+      dolares_comprar_pesos: 0,
+      dolar_valor: null
+    });
+
+    const normalizeMonth = (raw) => {
+      const def = emptyMonth();
+      if (!raw) return def;
+      const toArr = (v) => {
+        if (Array.isArray(v)) return v;
+        if (v && typeof v === 'object') return Object.values(v);
+        return [];
+      };
+      return {
+        ...def, ...raw,
+        cajas_pesos: raw.cajas_pesos || {},
+        cajas_dolares: raw.cajas_dolares || {},
+        ingresos: toArr(raw.ingresos),
+        deudores: toArr(raw.deudores),
+        extras: toArr(raw.extras),
+        gastos_estructura: toArr(raw.gastos_estructura),
+        gastos_personal: toArr(raw.gastos_personal),
+        gastos_extras: toArr(raw.gastos_extras),
+        egresos_dolares: toArr(raw.egresos_dolares),
+        ahorros: toArr(raw.ahorros),
+        inversiones: toArr(raw.inversiones),
+        ajustes_ocasionales: toArr(raw.ajustes_ocasionales),
+        fijos_snapshot: raw.fijos_snapshot || {},
+        pagos: raw.pagos || {},
+      };
+    };
+
+    const normalizeState = (raw) => {
+      if (!raw) return initialState();
+      const def = initialState();
+      const defCfg = def.config;
+      const cfg = raw.config || {};
+      const toArr = (v, fallback = []) => {
+        if (Array.isArray(v)) return v;
+        if (v && typeof v === 'object') return Object.values(v);
+        return fallback;
+      };
+      const mesesNorm = {};
+      const rawMeses = raw.meses || {};
+      Object.keys(rawMeses).forEach(k => { mesesNorm[k] = normalizeMonth(rawMeses[k]); });
+      return {
+        ...def, ...raw,
+        current: raw.current || def.current,
+        meses: mesesNorm,
+        config: {
+          ...defCfg, ...cfg,
+          cajas_pesos: toArr(cfg.cajas_pesos, defCfg.cajas_pesos),
+          cajas_dolares: toArr(cfg.cajas_dolares, defCfg.cajas_dolares),
+          tarjetas: toArr(cfg.tarjetas),
+          ingresos_fijos: toArr(cfg.ingresos_fijos),
+          deudores_fijos: toArr(cfg.deudores_fijos),
+          estructura_fijos: toArr(cfg.estructura_fijos),
+          egresos_dolares_fijos: toArr(cfg.egresos_dolares_fijos),
+          ahorros_fijos: toArr(cfg.ahorros_fijos, defCfg.ahorros_fijos),
+          tarjetas_consumos: toArr(cfg.tarjetas_consumos),
+        }
+      };
+    };
+
+    const ensureMonth = (state, key) => {
+      if (!state.meses[key]) {
+        const m = emptyMonth();
+        const keysAnt = Object.keys(state.meses).filter(k => k < key).sort();
+        const ult = keysAnt[keysAnt.length - 1];
+        if (ult) m.cajas_dolares = { ...state.meses[ult].cajas_dolares };
+        state.meses[key] = m;
+      }
+      return state.meses[key];
+    };
+    const getMonth = (state, key) => {
+      const meses = state.meses || {};
+      if (meses[key]) return meses[key];
+      const m = emptyMonth();
+      const keysAnt = Object.keys(meses).filter(k => k < key).sort();
+      const ult = keysAnt[keysAnt.length - 1];
+      if (ult) m.cajas_dolares = { ...meses[ult].cajas_dolares };
+      return m;
+    };
+
+    const sumBy = (arr, f = 'monto') => (arr || []).reduce((s, i) => s + (i[f] || 0), 0);
+    const pagoKey = (s, id) => `${s}:${id}`;
+    const isPagado = (s, id, m) => !!m.pagos?.[pagoKey(s, id)]?.pagado;
+    const getPago = (s, id, m) => m.pagos?.[pagoKey(s, id)];
+    const getFijoMonto = (s, f, m) => {
+      const snap = m.fijos_snapshot?.[pagoKey(s, f.id)];
+      return snap !== undefined ? snap : (f.monto || 0);
+    };
+    const sumSeccion = (items, s, m, { soloPendientes = false, esFijo = false } = {}) => {
+      return items.reduce((acc, i) => {
+        if (soloPendientes && isPagado(s, i.id, m)) return acc;
+        return acc + (esFijo ? getFijoMonto(s, i, m) : (i.monto || 0));
+      }, 0);
+    };
+
+    const calcTotals = (mes, config, mesKey) => {
+      const dolarValor = mes.dolar_valor || config.dolar_valor;
+      const sumaCajasPesos = config.cajas_pesos.reduce((s, c) => s + (mes.cajas_pesos[c.id] || 0), 0);
+      const ingFijosP = sumSeccion(config.ingresos_fijos, 'ingresos_fijos', mes, { soloPendientes: true, esFijo: true });
+      const ingVarP = sumSeccion(mes.ingresos, 'ingresos', mes, { soloPendientes: true });
+      const totIngresosPendientes = ingFijosP + ingVarP;
+      const deudFijosP = sumSeccion(config.deudores_fijos, 'deudores_fijos', mes, { soloPendientes: true, esFijo: true });
+      const deudVarP = sumSeccion(mes.deudores, 'deudores', mes, { soloPendientes: true });
+      const totDeudoresPendientes = deudFijosP + deudVarP;
+      const extrasP = sumSeccion(mes.extras, 'extras', mes, { soloPendientes: true });
+      const totHaberesTangiblesSoloCajas = sumaCajasPesos;
+      const ahorroUsd = mes.ahorro_dolares_usd || 0;
+      const ahorroUsdRealizado = !!mes.ahorro_dolares_realizado;
+      const ahorroUsdPendiente = ahorroUsdRealizado ? 0 : ahorroUsd;
+      const ahorroUsdPendienteEnPesos = ahorroUsdPendiente * dolarValor;
+      const totHaberesProbables = totHaberesTangiblesSoloCajas + totIngresosPendientes + totDeudoresPendientes + extrasP - ahorroUsdPendienteEnPesos;
+      const estrFijosP = sumSeccion(config.estructura_fijos, 'estructura_fijos', mes, { soloPendientes: true, esFijo: true });
+      const estrVarP = sumSeccion(mes.gastos_estructura, 'gastos_estructura', mes, { soloPendientes: true });
+      const totEstructuraPendiente = estrFijosP + estrVarP;
+      const personalP = sumSeccion(mes.gastos_personal, 'gastos_personal', mes, { soloPendientes: true });
+      const gExtrasP = sumSeccion(mes.gastos_extras, 'gastos_extras', mes, { soloPendientes: true });
+      const consumosMes = (config.tarjetas_consumos || []).filter(c => c.mes_key === mesKey);
+      const tarjetasTotales = {};
+      consumosMes.forEach(c => { tarjetasTotales[c.tarjeta_id] = (tarjetasTotales[c.tarjeta_id] || 0) + (c.monto || 0); });
+      const totTarjetas = Object.values(tarjetasTotales).reduce((s,n) => s+n, 0);
+      const totEgresosPesos = totEstructuraPendiente + personalP + gExtrasP + totTarjetas;
+      const ahorroFijosP = sumSeccion(config.ahorros_fijos, 'ahorros_fijos', mes, { soloPendientes: true, esFijo: true });
+      const ahorroVarP = sumSeccion(mes.ahorros, 'ahorros', mes, { soloPendientes: true });
+      const totAhorrosPesos = ahorroFijosP + ahorroVarP;
+      const totInversiones = sumBy(mes.inversiones);
+      const totAjustes = sumBy(mes.ajustes_ocasionales);
+      const sumaCajasDolares = config.cajas_dolares.reduce((s, c) => s + (mes.cajas_dolares[c.id] || 0), 0);
+      const egrUsdFijosP = sumSeccion(config.egresos_dolares_fijos, 'egresos_dolares_fijos', mes, { soloPendientes: true, esFijo: true });
+      const egrUsdVarP = sumSeccion(mes.egresos_dolares, 'egresos_dolares', mes, { soloPendientes: true });
+      const totEgrUsdPendiente = egrUsdFijosP + egrUsdVarP;
+      const finalUsd = sumaCajasDolares - totEgrUsdPendiente;
+      const finalHeaderPesos = totHaberesProbables - totEgresosPesos - totInversiones;
+      return {
+        dolarValor, sumaCajasPesos, sumaCajasDolares,
+        totIngresosPendientes, totDeudoresPendientes, extrasP,
+        totHaberesTangibles: totHaberesTangiblesSoloCajas,
+        totHaberesProbables, finalHeaderPesos,
+        totEstructuraPendiente, totPersonal: personalP, totExtrasGastos: gExtrasP,
+        totTarjetas, consumosMes,
+        totEgresosPesos, totAhorrosPesos, totInversiones,
+        totAjustes, totEgrUsdPendiente, finalUsd
+      };
+    };
+
+    const Btn = ({ onClick, children, variant = 'default', className = '', disabled, type = 'button', title }) => {
+      const base = 'inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg font-medium transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed text-sm';
+      const variants = {
+        default: 'bg-neutral-800 text-white hover:bg-neutral-700 border border-neutral-700',
+        primary: 'bg-orange-500 text-black hover:bg-orange-400 font-semibold',
+        ghost: 'bg-transparent text-neutral-400 hover:text-white hover:bg-neutral-800',
+        icon: 'p-2 bg-transparent text-neutral-400 hover:text-white hover:bg-neutral-800'
+      };
+      return <button type={type} onClick={onClick} disabled={disabled} title={title} className={`${base} ${variants[variant]} ${className}`}>{children}</button>;
+    };
+
+    const NumInput = ({ value, onChange, placeholder = '0', autoFocus, className = '', onKeyDown }) => {
+      const [local, setLocal] = useState(value === 0 || value ? String(value) : '');
+      useEffect(() => { setLocal(value === 0 || value ? String(value) : ''); }, [value]);
+      return (
+        <input type="text" inputMode="decimal" value={local}
+          onChange={e => { const v = e.target.value.replace(/[^\d.-]/g, ''); setLocal(v); const n = parseFloat(v); onChange(isNaN(n) ? 0 : n); }}
+          onKeyDown={onKeyDown} placeholder={placeholder} autoFocus={autoFocus}
+          className={`bg-neutral-900 border border-neutral-700 rounded-md px-2 py-1 text-white text-right focus:border-orange-500 focus:outline-none w-full ${className}`}
+        />
+      );
+    };
+
+    const TextInput = ({ value, onChange, placeholder, autoFocus, className = '', onKeyDown }) => (
+      <input type="text" value={value || ''} onChange={e => onChange(e.target.value)}
+        onKeyDown={onKeyDown} placeholder={placeholder} autoFocus={autoFocus}
+        className={`bg-neutral-900 border border-neutral-700 rounded-md px-2 py-1 text-white focus:border-orange-500 focus:outline-none ${className}`}
+      />
+    );
+
+    const CajaPicker = ({ cajas, mes, cajaField, currency = 'ARS', onSelect, onCancel, title }) => {
+      const fmtVal = currency === 'USD' ? fmtUsd : fmt;
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4" onClick={onCancel}>
+          <div className="w-full max-w-xs bg-neutral-950 border border-neutral-800 rounded-2xl p-4" onClick={e => e.stopPropagation()}>
+            <div className="text-sm font-semibold text-white mb-3">{title}</div>
+            <div className="space-y-1">
+              {cajas.map(c => (
+                <button key={c.id} onClick={() => onSelect(c.id)} className="w-full flex items-center justify-between px-3 py-2 bg-neutral-900 hover:bg-neutral-800 rounded-lg text-left transition-colors">
+                  <span className="text-white text-sm">{c.name}</span>
+                  <span className="text-xs text-neutral-400 tabular-nums">{fmtVal(mes[cajaField][c.id] || 0)}</span>
+                </button>
+              ))}
+            </div>
+            <Btn variant="ghost" onClick={onCancel} className="w-full mt-3">Cancelar</Btn>
+          </div>
+        </div>
+      );
+    };
+
+    const ItemRow = ({ item, section, mes, onUpdate, onDelete, canPay = false, payMode = 'egreso', cajas, cajaField = 'cajas_pesos', currency = 'ARS', onTogglePago, fijo, showCuotas }) => {
+      const [editing, setEditing] = useState(false);
+      const [name, setName] = useState(item.name || item.desc);
+      const [monto, setMonto] = useState(item.monto || 0);
+      const [pickerOpen, setPickerOpen] = useState(false);
+      const fmtVal = currency === 'USD' ? fmtUsd : fmt;
+      const pagado = canPay && isPagado(section, item.id, mes);
+      const pago = canPay && getPago(section, item.id, mes);
+      const cajaPago = pagado ? cajas?.find(c => c.id === pago.caja_id) : null;
+      const save = () => { onUpdate({ ...item, name, monto }); setEditing(false); };
+      if (editing) return (
+        <div className="flex items-center gap-2 p-2 bg-neutral-900 rounded-lg">
+          <TextInput value={name} onChange={setName} autoFocus className="flex-1" onKeyDown={e => e.key === 'Enter' && save()} />
+          <NumInput value={monto} onChange={setMonto} className="w-28" onKeyDown={e => e.key === 'Enter' && save()} />
+          <Btn variant="icon" onClick={save}><Check size={16} className="text-green-500" /></Btn>
+          <Btn variant="icon" onClick={() => setEditing(false)}><X size={16} /></Btn>
+        </div>
+      );
+      return (
+        <>
+          <div className={`group flex items-center gap-2 px-2 py-1.5 rounded-md transition-colors ${pagado ? 'bg-green-950/20' : 'hover:bg-neutral-900/50'}`}>
+            <div className="flex-1 min-w-0 flex items-center gap-1.5">
+              <span className={`truncate text-sm ${pagado ? 'text-neutral-500 line-through' : 'text-neutral-200'}`}>{item.name || item.desc}</span>
+              {fijo && !pagado && (
+                <span className="text-[9px] px-1 py-0.5 bg-orange-500/15 text-orange-400 rounded border border-orange-500/20 flex-shrink-0 font-semibold uppercase tracking-wider flex items-center gap-0.5">
+                  <Lock size={8} /> fijo
+                </span>
+              )}
+              {showCuotas && item.cuota_total > 1 && (
+                <span className="text-[10px] px-1.5 py-0.5 bg-orange-500/10 text-orange-400 rounded border border-orange-500/20 flex-shrink-0">
+                  {item.cuota_actual}/{item.cuota_total}
+                </span>
+              )}
+              {pagado && cajaPago && (
+                <span className="text-[10px] text-green-400/80 flex-shrink-0">
+                  {payMode === 'ingreso' ? 'a' : 'desde'} {cajaPago.name}
+                </span>
+              )}
+            </div>
+            <span className={`font-medium tabular-nums text-sm ${pagado ? 'text-neutral-500 line-through' : 'text-white'}`}>{fmtVal(item.monto)}</span>
+            {canPay && (pagado ? (
+              <button onClick={() => onTogglePago(null)} className="text-[10px] text-green-400 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded hover:bg-green-500/20 flex-shrink-0 flex items-center gap-1">
+                <Check size={10} />{payMode === 'ingreso' ? 'cobrado' : 'pagado'}
+              </button>
+            ) : (
+              <button onClick={() => setPickerOpen(true)} className="text-[10px] text-neutral-400 hover:text-orange-400 border border-neutral-700 hover:border-orange-400 px-2 py-0.5 rounded flex-shrink-0">
+                {payMode === 'ingreso' ? 'cobrar' : 'pagar'}
+              </button>
+            ))}
+            <div className="flex gap-0.5 opacity-60 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+              <Btn variant="icon" onClick={() => setEditing(true)}><Edit2 size={13} /></Btn>
+              <Btn variant="icon" onClick={() => onDelete(item.id)}><Trash2 size={13} className="text-red-400" /></Btn>
+            </div>
+          </div>
+          {pickerOpen && cajas && (
+            <CajaPicker cajas={cajas} mes={mes} cajaField={cajaField} currency={currency}
+              title={payMode === 'ingreso' ? '¿A qué caja entra?' : '¿Desde qué caja sale?'}
+              onSelect={cajaId => { onTogglePago(cajaId); setPickerOpen(false); }}
+              onCancel={() => setPickerOpen(false)} />
+          )}
+        </>
+      );
+    };
+
+    const AddItemForm = ({ onAdd, placeholder = 'Descripción' }) => {
+      const [open, setOpen] = useState(false);
+      const [name, setName] = useState('');
+      const [monto, setMonto] = useState(0);
+      const submit = () => { if (!name.trim()) return; onAdd({ name: name.trim(), monto }); setName(''); setMonto(0); setOpen(false); };
+      if (!open) return (
+        <button onClick={() => setOpen(true)} className="w-full flex items-center gap-2 px-2 py-1.5 text-neutral-500 hover:text-orange-400 hover:bg-neutral-900/50 rounded-md text-sm transition-colors">
+          <Plus size={14} /> Agregar
+        </button>
+      );
+      return (
+        <div className="flex items-center gap-2 p-2 bg-neutral-900/70 rounded-lg border border-dashed border-neutral-700">
+          <TextInput value={name} onChange={setName} placeholder={placeholder} className="flex-1" autoFocus onKeyDown={e => e.key === 'Enter' && submit()} />
+          <NumInput value={monto} onChange={setMonto} className="w-24" onKeyDown={e => e.key === 'Enter' && submit()} />
+          <Btn variant="primary" onClick={submit} className="px-2"><Check size={14} /></Btn>
+          <Btn variant="icon" onClick={() => setOpen(false)}><X size={14} /></Btn>
+        </div>
+      );
+    };
+
+    const MiniLabel = ({ children, total, accent = 'neutral', currency = 'ARS' }) => {
+      const colors = { orange: 'text-orange-500/80', neutral: 'text-neutral-500' };
+      const fmtVal = currency === 'USD' ? fmtUsd : fmt;
+      return (
+        <div className={`flex items-center justify-between px-3 py-1.5 mt-1 text-[10px] uppercase tracking-wider font-semibold ${colors[accent]}`}>
+          <span className="flex items-center gap-1">{accent === 'orange' && <Lock size={9} />}{children}</span>
+          {total !== undefined && <span className="tabular-nums">{fmtVal(total)}</span>}
+        </div>
+      );
+    };
+
+    const Block = ({ title, total, totalLabel, accent = 'orange', icon: Icon, children, subtitle, currency = 'ARS' }) => {
+      const accents = { orange: 'text-orange-400 border-orange-500/30', green: 'text-green-400 border-green-500/30', red: 'text-red-400 border-red-500/30', white: 'text-white border-neutral-600', blue: 'text-blue-400 border-blue-500/30' };
+      const fmtVal = currency === 'USD' ? fmtUsd : fmt;
+      return (
+        <div className="bg-neutral-900/40 border border-neutral-800 rounded-2xl overflow-hidden">
+          <div className={`flex items-center justify-between px-4 py-3 border-b border-neutral-800 ${accents[accent]}`}>
+            <div className="flex items-center gap-2">
+              {Icon && <Icon size={16} />}
+              <h3 className="font-semibold text-sm uppercase tracking-wider">{title}</h3>
+              {subtitle && <span className="text-xs text-neutral-500 normal-case tracking-normal">{subtitle}</span>}
+            </div>
+            {totalLabel ? <span className="font-bold tabular-nums text-sm">{totalLabel}</span> : total !== undefined && <span className="font-bold tabular-nums text-sm">{fmtVal(total)}</span>}
+          </div>
+          <div className="p-2">{children}</div>
+        </div>
+      );
+    };
+
+    const SubBlock = ({ title, total, children, accent = 'neutral', currency = 'ARS' }) => {
+      const accents = { neutral: 'text-neutral-400', orange: 'text-orange-400', green: 'text-green-400', red: 'text-red-400', blue: 'text-blue-400' };
+      const fmtVal = currency === 'USD' ? fmtUsd : fmt;
+      return (
+        <div className="mb-1">
+          <div className={`flex items-center justify-between px-2 py-1.5 ${accents[accent]}`}>
+            <span className="text-xs font-semibold uppercase tracking-wider">{title}</span>
+            {total !== undefined && <span className="text-xs font-bold tabular-nums">{fmtVal(total)}</span>}
+          </div>
+          <div>{children}</div>
+        </div>
+      );
+    };
+
+    const SectionFV = ({ sectionFijo, sectionVar, fijos, variables, mes, onFijoAdd, onFijoUpdate, onFijoDelete, onVarAdd, onVarUpdate, onVarDelete, onTogglePagoFijo, onTogglePagoVar, cajas, cajaField, payMode, canPay = false, placeholder = 'Descripción', currency = 'ARS' }) => {
+      const totFijos = sumSeccion(fijos, sectionFijo, mes, { esFijo: true });
+      const totVar = sumSeccion(variables, sectionVar, mes);
+      return (
+        <div>
+          <MiniLabel accent="orange" total={totFijos} currency={currency}>Fijos · hacia adelante</MiniLabel>
+          {fijos.map(f => {
+            const item = { ...f, monto: getFijoMonto(sectionFijo, f, mes) };
+            return (
+              <ItemRow key={f.id} item={item} section={sectionFijo} mes={mes}
+                onUpdate={u => onFijoUpdate({ ...u, monto: u.monto })} onDelete={onFijoDelete}
+                canPay={canPay} payMode={payMode} cajas={cajas} cajaField={cajaField} currency={currency}
+                onTogglePago={cajaId => onTogglePagoFijo(f.id, cajaId)} fijo />
+            );
+          })}
+          <AddItemForm onAdd={onFijoAdd} placeholder={`${placeholder} fijo`} />
+          <MiniLabel total={totVar} currency={currency}>Variables · solo este mes</MiniLabel>
+          {variables.map(v => (
+            <ItemRow key={v.id} item={v} section={sectionVar} mes={mes}
+              onUpdate={onVarUpdate} onDelete={onVarDelete}
+              canPay={canPay} payMode={payMode} cajas={cajas} cajaField={cajaField} currency={currency}
+              onTogglePago={cajaId => onTogglePagoVar(v.id, cajaId)} />
+          ))}
+          <AddItemForm onAdd={onVarAdd} placeholder={`${placeholder} variable`} />
+        </div>
+      );
+    };
+
+    const TarjetaCollapsible = ({ tarjeta, consumosMes, onAdd, onDelete, onUpdate, currentKey }) => {
+      const [open, setOpen] = useState(false);
+      const [addOpen, setAddOpen] = useState(false);
+      const pagoUnico = consumosMes.filter(c => c.tipo === 'cierre' || (c.tipo !== 'cuotas' && (c.cuota_total || 1) === 1));
+      const enCuotas = consumosMes.filter(c => c.tipo === 'cuotas' || (c.cuota_total || 1) > 1);
+      const totPagoUnico = sumBy(pagoUnico);
+      const totCuotas = sumBy(enCuotas);
+      const total = totPagoUnico + totCuotas;
+      return (
+        <div className="bg-neutral-900/40 rounded-lg mb-1 overflow-hidden">
+          <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between px-3 py-2 hover:bg-neutral-900/70 transition-colors">
+            <div className="flex items-center gap-2">
+              {open ? <ChevronDown size={14} className="text-neutral-400" /> : <ChevronRight size={14} className="text-neutral-400" />}
+              <CreditCard size={13} className="text-orange-400" />
+              <span className="text-sm font-medium text-white">{tarjeta.name}</span>
+              {tarjeta.cierre_dia && <span className="text-[10px] text-neutral-500">cierra {tarjeta.cierre_dia}</span>}
+            </div>
+            <span className="text-sm font-semibold text-white tabular-nums">{fmt(total)}</span>
+          </button>
+          {open && (
+            <div className="p-1 border-t border-neutral-800/50">
+              <MiniLabel total={totPagoUnico}>Pago hasta cierre</MiniLabel>
+              {pagoUnico.map(c => <ItemRow key={c.id} item={{ ...c, name: c.desc }} onUpdate={u => onUpdate({ ...u, desc: u.name })} onDelete={onDelete} />)}
+              {pagoUnico.length === 0 && <div className="text-[11px] text-neutral-600 italic px-3 py-1">Sin gastos</div>}
+              <MiniLabel total={totCuotas}>En cuotas</MiniLabel>
+              {enCuotas.map(c => <ItemRow key={c.id} item={{ ...c, name: c.desc }} onUpdate={u => onUpdate({ ...u, desc: u.name })} onDelete={onDelete} showCuotas />)}
+              {enCuotas.length === 0 && <div className="text-[11px] text-neutral-600 italic px-3 py-1">Sin cuotas</div>}
+              {!addOpen ? (
+                <button onClick={() => setAddOpen(true)} className="w-full flex items-center gap-2 px-2 py-1.5 mt-1 text-neutral-500 hover:text-orange-400 hover:bg-neutral-900/50 rounded-md text-xs transition-colors">
+                  <Plus size={12} /> Agregar consumo
+                </button>
+              ) : (
+                <TarjetaAddForm tarjetaId={tarjeta.id} currentKey={currentKey} onAdd={c => { onAdd(c); setAddOpen(false); }} onCancel={() => setAddOpen(false)} />
+              )}
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    const TarjetaAddForm = ({ tarjetaId, currentKey, onAdd, onCancel }) => {
+      const [desc, setDesc] = useState('');
+      const [monto, setMonto] = useState(0);
+      const [tipo, setTipo] = useState('cierre');
+      const [cuotas, setCuotas] = useState(3);
+      const [mesInicio, setMesInicio] = useState('actual');
+      const submit = () => {
+        if (!desc.trim()) return;
+        const startKey = mesInicio === 'siguiente' ? nextMonthKey(currentKey) : currentKey;
+        onAdd({ tarjeta_id: tarjetaId, desc: desc.trim(), monto, cuota_total: tipo === 'cuotas' ? cuotas : 1, tipo, mes_key_inicial: startKey });
+        setDesc(''); setMonto(0);
+      };
+      return (
+        <div className="p-2 bg-neutral-900/70 rounded-lg border border-dashed border-neutral-700 space-y-2 mt-1">
+          <div className="flex gap-2">
+            <TextInput value={desc} onChange={setDesc} placeholder="Descripción" className="flex-1" autoFocus />
+            <NumInput value={monto} onChange={setMonto} className="w-24" />
+          </div>
+          <div className="flex gap-1 text-xs">
+            <button onClick={() => setTipo('cierre')} className={`flex-1 px-2 py-1.5 rounded-md border ${tipo === 'cierre' ? 'bg-orange-500/20 border-orange-500 text-orange-400' : 'bg-neutral-900 border-neutral-700 text-neutral-400'}`}>Pago único</button>
+            <button onClick={() => setTipo('cuotas')} className={`flex-1 px-2 py-1.5 rounded-md border ${tipo === 'cuotas' ? 'bg-orange-500/20 border-orange-500 text-orange-400' : 'bg-neutral-900 border-neutral-700 text-neutral-400'}`}>En cuotas</button>
+          </div>
+          {tipo === 'cuotas' && (
+            <div className="flex items-center gap-2 text-xs text-neutral-500">
+              <span>Cantidad de cuotas:</span>
+              <NumInput value={cuotas} onChange={setCuotas} className="w-16" />
+            </div>
+          )}
+          <div className="flex items-center gap-2 text-xs">
+            <span className="text-neutral-500">¿En qué mes se paga?</span>
+            <button onClick={() => setMesInicio('actual')} className={`px-2 py-1 rounded border ${mesInicio === 'actual' ? 'bg-orange-500/20 border-orange-500 text-orange-400' : 'bg-neutral-900 border-neutral-700 text-neutral-400'}`}>Este mes</button>
+            <button onClick={() => setMesInicio('siguiente')} className={`px-2 py-1 rounded border ${mesInicio === 'siguiente' ? 'bg-orange-500/20 border-orange-500 text-orange-400' : 'bg-neutral-900 border-neutral-700 text-neutral-400'}`}>Próximo mes</button>
+          </div>
+          <div className="flex justify-end gap-2 pt-1">
+            <Btn variant="ghost" onClick={onCancel}>Cancelar</Btn>
+            <Btn variant="primary" onClick={submit}>Agregar</Btn>
+          </div>
+        </div>
+      );
+    };
+
+    const AhorroDolaresRow = ({ mes, cfg, dolarValor, onChangeMonto, onToggleRealizado }) => {
+      const [picking, setPicking] = useState(null);
+      const [cajaPesosSel, setCajaPesosSel] = useState(null);
+      const monto = mes.ahorro_dolares_usd || 0;
+      const realizado = !!mes.ahorro_dolares_realizado;
+      const enPesos = monto * dolarValor;
+      const cajaPesos = cfg.cajas_pesos.find(c => c.id === mes.ahorro_dolares_caja_pesos);
+      const cajaUsd = cfg.cajas_dolares.find(c => c.id === mes.ahorro_dolares_caja_usd);
+      const onSelectPesos = (id) => { setCajaPesosSel(id); setPicking('usd'); };
+      const onSelectUsd = (id) => { onToggleRealizado(cajaPesosSel, id); setPicking(null); setCajaPesosSel(null); };
+      return (
+        <>
+          <div className={`flex items-center gap-2 px-2 py-2 rounded-md ${realizado ? 'bg-green-950/20' : 'hover:bg-neutral-900/50'}`}>
+            <div className="flex-1 min-w-0 flex items-center gap-2 flex-wrap">
+              <span className={`text-sm ${realizado ? 'text-neutral-500 line-through' : 'text-neutral-200'}`}>Ahorro este mes</span>
+              {realizado && cajaPesos && cajaUsd && <span className="text-[10px] text-green-400/80">{cajaPesos.name} → {cajaUsd.name}</span>}
+            </div>
+            <div className="w-20"><NumInput value={monto} onChange={onChangeMonto} /></div>
+            <span className={`text-[11px] tabular-nums w-20 text-right ${realizado ? 'text-neutral-500 line-through' : 'text-neutral-400'}`}>= {fmt(enPesos)}</span>
+            {monto > 0 && (realizado ? (
+              <button onClick={() => onToggleRealizado(null, null)} className="text-[10px] text-green-400 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded hover:bg-green-500/20 flex-shrink-0 flex items-center gap-1">
+                <Check size={10} />realizado
+              </button>
+            ) : (
+              <button onClick={() => setPicking('pesos')} className="text-[10px] text-neutral-400 hover:text-orange-400 border border-neutral-700 hover:border-orange-400 px-2 py-0.5 rounded flex-shrink-0">realizar</button>
+            ))}
+          </div>
+          {picking === 'pesos' && <CajaPicker cajas={cfg.cajas_pesos} mes={mes} cajaField="cajas_pesos" currency="ARS" title={`¿Desde qué caja $ sacás ${fmt(enPesos)}?`} onSelect={onSelectPesos} onCancel={() => setPicking(null)} />}
+          {picking === 'usd' && <CajaPicker cajas={cfg.cajas_dolares} mes={mes} cajaField="cajas_dolares" currency="USD" title={`¿A qué caja USD van los ${fmtUsd(monto)}?`} onSelect={onSelectUsd} onCancel={() => { setPicking(null); setCajaPesosSel(null); }} />}
+        </>
+      );
+    };
+
+    const ConfigModal = ({ open, onClose, state, onUpdate }) => {
+      const [tab, setTab] = useState('cajas');
+      if (!open) return null;
+      const cfg = state.config;
+      const updateCfg = (nc) => onUpdate({ ...state, config: { ...cfg, ...nc } });
+      const addToList = (k, i) => updateCfg({ [k]: [...cfg[k], { id: uid(), ...i }] });
+      const updateInList = (k, id, u) => updateCfg({ [k]: cfg[k].map(x => x.id === id ? { ...x, ...u } : x) });
+      const removeFromList = (k, id) => updateCfg({ [k]: cfg[k].filter(x => x.id !== id) });
+      const tabs = [{ id: 'cajas', label: 'Cajas', icon: Wallet }, { id: 'tarjetas', label: 'Tarjetas', icon: CreditCard }, { id: 'dolar', label: 'Dólar', icon: DollarSign }];
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4" onClick={onClose}>
+          <div className="w-full max-w-2xl max-h-[85vh] bg-neutral-950 border border-neutral-800 rounded-2xl flex flex-col" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-4 border-b border-neutral-800">
+              <h2 className="font-bold text-white flex items-center gap-2"><Settings size={18} /> Configuración</h2>
+              <Btn variant="icon" onClick={onClose}><X size={18} /></Btn>
+            </div>
+            <div className="flex border-b border-neutral-800 overflow-x-auto">
+              {tabs.map(t => (
+                <button key={t.id} onClick={() => setTab(t.id)} className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${tab === t.id ? 'text-orange-400 border-orange-500' : 'text-neutral-500 border-transparent hover:text-white'}`}>
+                  <t.icon size={14} /> {t.label}
+                </button>
+              ))}
+            </div>
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              {tab === 'cajas' && (<>
+                <div>
+                  <h3 className="text-sm font-semibold text-white mb-2">Cajas en pesos</h3>
+                  <div className="space-y-1 mb-2">
+                    {cfg.cajas_pesos.map(c => (
+                      <div key={c.id} className="flex items-center gap-2 p-2 bg-neutral-900 rounded-lg">
+                        <TextInput value={c.name} onChange={v => updateInList('cajas_pesos', c.id, { name: v })} className="flex-1" />
+                        <Btn variant="icon" onClick={() => removeFromList('cajas_pesos', c.id)}><Trash2 size={14} className="text-red-400" /></Btn>
+                      </div>
+                    ))}
+                  </div>
+                  <Btn variant="ghost" onClick={() => addToList('cajas_pesos', { name: 'Nueva caja' })}><Plus size={14} /> Agregar caja $</Btn>
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-white mb-2">Cajas en dólares</h3>
+                  <div className="space-y-1 mb-2">
+                    {cfg.cajas_dolares.map(c => (
+                      <div key={c.id} className="flex items-center gap-2 p-2 bg-neutral-900 rounded-lg">
+                        <TextInput value={c.name} onChange={v => updateInList('cajas_dolares', c.id, { name: v })} className="flex-1" />
+                        <Btn variant="icon" onClick={() => removeFromList('cajas_dolares', c.id)}><Trash2 size={14} className="text-red-400" /></Btn>
+                      </div>
+                    ))}
+                  </div>
+                  <Btn variant="ghost" onClick={() => addToList('cajas_dolares', { name: 'Nueva caja USD' })}><Plus size={14} /> Agregar caja USD</Btn>
+                </div>
+              </>)}
+              {tab === 'tarjetas' && (
+                <div>
+                  <p className="text-xs text-neutral-500 mb-3">Configurá tus tarjetas con el día de cierre.</p>
+                  <div className="space-y-2 mb-2">
+                    {cfg.tarjetas.map(t => (
+                      <div key={t.id} className="p-3 bg-neutral-900 rounded-lg space-y-2">
+                        <div className="flex items-center gap-2">
+                          <TextInput value={t.name} onChange={v => updateInList('tarjetas', t.id, { name: v })} placeholder="Nombre" className="flex-1" />
+                          <Btn variant="icon" onClick={() => removeFromList('tarjetas', t.id)}><Trash2 size={14} className="text-red-400" /></Btn>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm">
+                          <label className="text-neutral-400 text-xs">Día de cierre:</label>
+                          <NumInput value={t.cierre_dia || 1} onChange={v => updateInList('tarjetas', t.id, { cierre_dia: Math.min(31, Math.max(1, v)) })} className="w-20" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <Btn variant="ghost" onClick={() => addToList('tarjetas', { name: 'Nueva tarjeta', cierre_dia: 1 })}><Plus size={14} /> Agregar tarjeta</Btn>
+                </div>
+              )}
+              {tab === 'dolar' && (
+                <div>
+                  <h3 className="text-sm font-semibold text-white mb-2">Valor del dólar (ARS)</h3>
+                  <NumInput value={cfg.dolar_valor} onChange={v => updateCfg({ dolar_valor: v })} className="w-full" />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    const LoginScreen = () => {
+      const [email, setEmail] = useState('');
+      const [password, setPassword] = useState('');
+      const [isRegister, setIsRegister] = useState(false);
+      const [error, setError] = useState('');
+      const [submitting, setSubmitting] = useState(false);
+      const submit = async () => {
+        if (!email.trim() || !password.trim()) return;
+        setSubmitting(true); setError('');
+        try {
+          if (isRegister) await fbAuth.createUserWithEmailAndPassword(email.trim(), password);
+          else await fbAuth.signInWithEmailAndPassword(email.trim(), password);
+        } catch (e) {
+          const msgs = {
+            'auth/user-not-found': 'No existe una cuenta con ese email.',
+            'auth/wrong-password': 'Contraseña incorrecta.',
+            'auth/email-already-in-use': 'Ya existe una cuenta con ese email.',
+            'auth/weak-password': 'La contraseña debe tener al menos 6 caracteres.',
+            'auth/invalid-email': 'Email inválido.',
+            'auth/invalid-credential': 'Email o contraseña incorrectos.',
+          };
+          setError(msgs[e.code] || e.message);
+        }
+        setSubmitting(false);
+      };
+      return (
+        <div className="min-h-screen bg-black flex items-center justify-center p-4">
+          <div className="w-full max-w-xs">
+            <div className="text-center mb-8">
+              <div className="text-5xl font-black text-orange-500 mb-1">P</div>
+              <div className="text-xl font-bold text-white">Palmito</div>
+              <div className="text-neutral-500 text-sm mt-1">Finanzas personales</div>
+            </div>
+            <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 space-y-3">
+              <h2 className="text-white font-semibold text-center text-sm">{isRegister ? 'Crear cuenta' : 'Iniciar sesión'}</h2>
+              <input type="email" value={email} onChange={e => setEmail(e.target.value)}
+                placeholder="Email" autoComplete="email" onKeyDown={e => e.key === 'Enter' && submit()}
+                className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2.5 text-white text-sm focus:border-orange-500 focus:outline-none" />
+              <input type="password" value={password} onChange={e => setPassword(e.target.value)}
+                placeholder="Contraseña" autoComplete={isRegister ? 'new-password' : 'current-password'}
+                onKeyDown={e => e.key === 'Enter' && submit()}
+                className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2.5 text-white text-sm focus:border-orange-500 focus:outline-none" />
+              {error && <div className="text-red-400 text-xs px-1">{error}</div>}
+              <Btn variant="primary" onClick={submit} disabled={submitting} className="w-full mt-1">
+                {submitting ? <Loader2 size={16} className="animate-spin" /> : (isRegister ? 'Crear cuenta' : 'Entrar')}
+              </Btn>
+              <button onClick={() => { setIsRegister(!isRegister); setError(''); }}
+                className="w-full text-xs text-neutral-500 hover:text-neutral-300 text-center pt-1">
+                {isRegister ? '¿Ya tenés cuenta? Iniciá sesión' : '¿Primera vez? Creá tu cuenta'}
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    function App() {
+      const [state, setState] = useState(null);
+      const [user, setUser] = useState(undefined);
+      const [configOpen, setConfigOpen] = useState(false);
+      const [loading, setLoading] = useState(true);
+      const [saveStatus, setSaveStatus] = useState('synced');
+      const saveTimerRef = useRef(null);
+      const isRemoteUpdate = useRef(false);
+
+      useEffect(() => {
+        const unsub = fbAuth.onAuthStateChanged(async (u) => {
+          setUser(u);
+          if (u) {
+            setLoading(true);
+            try {
+              const snap = await fbDb.ref(`users/${u.uid}/state`).once('value');
+              if (snap.exists()) {
+                isRemoteUpdate.current = true;
+                setState(normalizeState(snap.val()));
+              } else {
+                try {
+                  const raw = localStorage.getItem(STORAGE_KEY);
+                  if (raw) setState(normalizeState(JSON.parse(raw)));
+                  else setState(initialState());
+                } catch { setState(initialState()); }
+              }
+            } catch (e) { console.error(e); setState(initialState()); }
+            setLoading(false);
+          } else {
+            setState(null); setLoading(false);
+          }
+        });
+        return unsub;
+      }, []);
+
+      useEffect(() => {
+        const handleFocus = async () => {
+          if (!user) return;
+          try {
+            const snap = await fbDb.ref(`users/${user.uid}/state`).once('value');
+            if (snap.exists()) {
+              isRemoteUpdate.current = true;
+              setState(normalizeState(snap.val()));
+            }
+          } catch {}
+        };
+        window.addEventListener('focus', handleFocus);
+        return () => window.removeEventListener('focus', handleFocus);
+      }, [user]);
+
+      useEffect(() => {
+        if (!state || !user) return;
+        if (isRemoteUpdate.current) { isRemoteUpdate.current = false; return; }
+        setSaveStatus('saving');
+        if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+        saveTimerRef.current = setTimeout(async () => {
+          try {
+            await fbDb.ref(`users/${user.uid}/state`).set(state);
+            setSaveStatus('synced');
+          } catch (e) { console.error(e); setSaveStatus('error'); }
+        }, 1500);
+        return () => { if (saveTimerRef.current) clearTimeout(saveTimerRef.current); };
+      }, [state]);
+
+      const updateState = useCallback((ns) => setState(ns), []);
+      const currentKey = state?.current;
+      const mes = state ? getMonth(state, currentKey) : null;
+      const totals = state && mes ? calcTotals(mes, state.config, currentKey) : null;
+
+      const updateMes = (mutator) => {
+        const ns = JSON.parse(JSON.stringify(state));
+        const m = ensureMonth(ns, currentKey);
+        const antes = { ...m.cajas_dolares };
+        mutator(m, ns);
+        const desp = m.cajas_dolares;
+        const cambios = {};
+        Object.keys(desp).forEach(k => { if (antes[k] !== desp[k]) cambios[k] = desp[k]; });
+        Object.keys(antes).forEach(k => { if (!(k in desp)) cambios[k] = undefined; });
+        if (Object.keys(cambios).length > 0) {
+          Object.keys(ns.meses).forEach(key => {
+            if (key > currentKey) {
+              if (!ns.meses[key].cajas_dolares) ns.meses[key].cajas_dolares = {};
+              Object.entries(cambios).forEach(([c, v]) => { if (v === undefined) delete ns.meses[key].cajas_dolares[c]; else ns.meses[key].cajas_dolares[c] = v; });
+            }
+          });
+        }
+        setState(ns);
+      };
+
+      const updateConfig = (mutator) => {
+        const ns = JSON.parse(JSON.stringify(state));
+        mutator(ns.config, ns);
+        setState(ns);
+      };
+
+      const changeMonth = (delta) => {
+        const { year, month } = parseKey(currentKey);
+        const d = new Date(year, month + delta, 1);
+        setState({ ...state, current: monthKey(d.getFullYear(), d.getMonth()) });
+      };
+
+      if (user === undefined) return <div className="min-h-screen bg-black flex items-center justify-center"><Loader2 className="animate-spin text-orange-500" size={32} /></div>;
+      if (!user) return <LoginScreen />;
+      if (loading || !state || !mes || !totals) return (
+        <div className="min-h-screen bg-black flex items-center justify-center">
+          <div className="text-center">
+            <Loader2 className="animate-spin text-orange-500 mx-auto mb-3" size={32} />
+            <div className="text-neutral-500 text-sm">Cargando tus datos...</div>
+          </div>
+        </div>
+      );
+
+      const cfg = state.config;
+      const addVar = (s, i) => updateMes(m => m[s].push({ id: uid(), monto: 0, ...i }));
+      const updateVar = (s, u) => updateMes(m => { const i = m[s].findIndex(x => x.id === u.id); if (i >= 0) m[s][i] = u; });
+      const deleteVar = (s, id) => updateMes(m => { m[s] = m[s].filter(x => x.id !== id); if (m.pagos?.[pagoKey(s, id)]?.pagado) delete m.pagos[pagoKey(s, id)]; });
+      const addFijo = (k, i) => updateConfig(c => c[k].push({ id: uid(), monto: 0, ...i }));
+      const updateFijo = (section, updated) => {
+        const ns = JSON.parse(JSON.stringify(state));
+        const f = ns.config[section].find(x => x.id === updated.id);
+        if (!f) return;
+        const oldM = f.monto; const newM = updated.monto;
+        if (oldM !== newM) {
+          Object.keys(ns.meses).forEach(mKey => {
+            if (mKey < ns.current) {
+              const m = ns.meses[mKey];
+              if (!m.fijos_snapshot) m.fijos_snapshot = {};
+              const sk = pagoKey(section, updated.id);
+              if (!(sk in m.fijos_snapshot)) m.fijos_snapshot[sk] = oldM;
+            }
+          });
+        }
+        f.name = updated.name; f.monto = newM;
+        setState(ns);
+      };
+      const deleteFijo = (s, id) => updateConfig(c => { c[s] = c[s].filter(x => x.id !== id); });
+
+      const togglePago = (section, id, cajaId, esFijo, payMode, cajaField) => {
+        updateMes((m, ns) => {
+          const key = pagoKey(section, id);
+          const already = m.pagos?.[key]?.pagado;
+          const getMonto = () => {
+            if (esFijo) { const f = ns.config[section].find(x => x.id === id); return f ? getFijoMonto(section, f, m) : 0; }
+            return m[section].find(x => x.id === id)?.monto || 0;
+          };
+          const sign = payMode === 'ingreso' ? 1 : -1;
+          const monto = getMonto();
+          if (already) {
+            const prev = m.pagos[key].caja_id;
+            m[cajaField][prev] = (m[cajaField][prev] || 0) - monto * sign;
+            delete m.pagos[key];
+          } else if (cajaId) {
+            m[cajaField][cajaId] = (m[cajaField][cajaId] || 0) + monto * sign;
+            if (!m.pagos) m.pagos = {};
+            m.pagos[key] = { pagado: true, caja_id: cajaId };
+          }
+        });
+      };
+
+      const mkToggleFijo = (s, pm, cf) => (id, cajaId) => togglePago(s, id, cajaId, true, pm, cf);
+      const mkToggleVar = (s, pm, cf) => (id, cajaId) => togglePago(s, id, cajaId, false, pm, cf);
+
+      const addTarjetaConsumo = (c) => {
+        const ns = JSON.parse(JSON.stringify(state));
+        const parent = uid();
+        const cuotas = c.cuota_total || 1;
+        let key = c.mes_key_inicial || currentKey;
+        for (let i = 1; i <= cuotas; i++) {
+          ns.config.tarjetas_consumos.push({ id: uid(), parent_id: parent, tarjeta_id: c.tarjeta_id, desc: c.desc, monto: c.monto, cuota_actual: i, cuota_total: cuotas, mes_key: key, tipo: cuotas > 1 ? 'cuotas' : 'cierre' });
+          key = nextMonthKey(key);
+        }
+        setState(ns);
+      };
+      const updateTarjetaConsumo = (u) => updateConfig(c => { const i = c.tarjetas_consumos.findIndex(x => x.id === u.id); if (i >= 0) c.tarjetas_consumos[i] = { ...c.tarjetas_consumos[i], ...u }; });
+      const deleteTarjetaConsumo = (id) => updateConfig(c => {
+        const co = c.tarjetas_consumos.find(x => x.id === id);
+        if (!co) return;
+        if (co.parent_id && co.cuota_total > 1) c.tarjetas_consumos = c.tarjetas_consumos.filter(x => x.parent_id !== co.parent_id);
+        else c.tarjetas_consumos = c.tarjetas_consumos.filter(x => x.id !== id);
+      });
+
+      const setCajaPesos = (cajaId, monto) => updateMes(m => { m.cajas_pesos[cajaId] = monto; });
+      const setCajaDolares = (cajaId, monto) => updateMes(m => { m.cajas_dolares[cajaId] = monto; });
+      const setAhorroDolares = (monto) => updateMes(m => { m.ahorro_dolares_usd = monto; });
+
+      const togglearAhorroRealizado = (cpId, cuId) => {
+        updateMes(m => {
+          const monto = m.ahorro_dolares_usd || 0;
+          const enPesos = monto * (m.dolar_valor || state.config.dolar_valor);
+          const realizado = !!m.ahorro_dolares_realizado;
+          if (realizado) {
+            const pp = m.ahorro_dolares_caja_pesos, pu = m.ahorro_dolares_caja_usd;
+            if (pp) m.cajas_pesos[pp] = (m.cajas_pesos[pp] || 0) + enPesos;
+            if (pu) m.cajas_dolares[pu] = (m.cajas_dolares[pu] || 0) - monto;
+            m.ahorro_dolares_realizado = false;
+            m.ahorro_dolares_caja_pesos = null;
+            m.ahorro_dolares_caja_usd = null;
+          } else if (cpId && cuId && monto > 0) {
+            m.cajas_pesos[cpId] = (m.cajas_pesos[cpId] || 0) - enPesos;
+            m.cajas_dolares[cuId] = (m.cajas_dolares[cuId] || 0) + monto;
+            m.ahorro_dolares_realizado = true;
+            m.ahorro_dolares_caja_pesos = cpId;
+            m.ahorro_dolares_caja_usd = cuId;
+          }
+        });
+      };
+
+      const copyFromPrevMonth = () => {
+        const prev = state.meses[prevMonthKey(currentKey)];
+        if (!prev) { alert('No hay mes anterior con datos'); return; }
+        updateMes(m => { m.cajas_pesos = { ...prev.cajas_pesos }; m.cajas_dolares = { ...prev.cajas_dolares }; });
+      };
+
+      return (
+        <div className="min-h-screen bg-black text-white">
+          <div className="sticky top-0 z-20 bg-black/95 backdrop-blur-md border-b border-neutral-900">
+            <div className="max-w-5xl mx-auto px-4 py-3" style={{paddingTop: 'max(env(safe-area-inset-top), 0.75rem)'}}>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-1">
+                  <Btn variant="icon" onClick={() => changeMonth(-1)}><ChevronLeft size={18} /></Btn>
+                  <div className="text-center min-w-[140px]">
+                    <div className="text-xs text-neutral-500 uppercase tracking-wider">Mes activo</div>
+                    <div className="font-bold text-white">{monthLabel(currentKey)}</div>
+                  </div>
+                  <Btn variant="icon" onClick={() => changeMonth(1)}><ChevronRight size={18} /></Btn>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div title={saveStatus === 'saving' ? 'Guardando...' : saveStatus === 'error' ? 'Error' : 'Sincronizado'} className="p-2">
+                    {saveStatus === 'saving' ? <Loader2 size={14} className="animate-spin text-orange-400" />
+                      : saveStatus === 'error' ? <Cloud size={14} className="text-red-400" />
+                      : <Cloud size={14} className="text-green-500/60" />}
+                  </div>
+                  <Btn variant="icon" onClick={() => setConfigOpen(true)}><Settings size={18} /></Btn>
+                  <Btn variant="icon" onClick={() => fbAuth.signOut()} title="Cerrar sesión"><LogOut size={16} /></Btn>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div className="bg-gradient-to-br from-orange-500/10 via-orange-500/5 to-transparent border border-orange-500/20 rounded-2xl p-4">
+                  <div className="text-xs text-orange-400 uppercase tracking-wider font-semibold mb-2">Pesos</div>
+                  <div className="space-y-1 text-sm">
+                    <div className="flex justify-between"><span className="text-neutral-400">Haberes tangibles</span><span className="text-white tabular-nums font-medium">{fmt(totals.totHaberesTangibles)}</span></div>
+                    <div className="flex justify-between"><span className="text-neutral-400">Haberes probables</span><span className="text-blue-400 tabular-nums font-medium">{fmt(totals.totHaberesProbables)}</span></div>
+                    <div className="flex justify-between"><span className="text-neutral-400">Egresos</span><span className="text-red-400 tabular-nums font-medium">−{fmt(totals.totEgresosPesos)}</span></div>
+                    <div className="flex justify-between"><span className="text-neutral-400">Inversiones</span><span className="text-orange-400 tabular-nums font-medium">−{fmt(totals.totInversiones)}</span></div>
+                    <div className="border-t border-orange-500/30 pt-2 mt-2 flex justify-between items-center">
+                      <span className="text-orange-400 font-semibold uppercase text-xs tracking-wider">Final</span>
+                      <span className={`text-xl font-bold tabular-nums ${totals.finalHeaderPesos < 0 ? 'text-red-400' : 'text-white'}`}>{fmt(totals.finalHeaderPesos)}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-gradient-to-br from-green-500/10 via-green-500/5 to-transparent border border-green-500/20 rounded-2xl p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-xs text-green-400 uppercase tracking-wider font-semibold">Dólares</div>
+                    <div className="text-[10px] text-neutral-500">dólar {fmt(cfg.dolar_valor)}</div>
+                  </div>
+                  <div className="space-y-1 text-sm">
+                    <div className="flex justify-between"><span className="text-neutral-400">Cajas</span><span className="text-white tabular-nums font-medium">{fmtUsd(totals.sumaCajasDolares)}</span></div>
+                    <div className="flex justify-between"><span className="text-neutral-400">Egresos</span><span className="text-red-400 tabular-nums font-medium">−{fmtUsd(totals.totEgrUsdPendiente)}</span></div>
+                    <div className="border-t border-green-500/30 pt-2 mt-2 flex justify-between items-center">
+                      <span className="text-green-400 font-semibold uppercase text-xs tracking-wider">Final</span>
+                      <span className={`text-xl font-bold tabular-nums ${totals.finalUsd < 0 ? 'text-red-400' : 'text-white'}`}>{fmtUsd(totals.finalUsd)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="max-w-5xl mx-auto px-4 py-4 pb-32 space-y-4">
+            <Block title="Haberes (pesos)" total={totals.totHaberesProbables} icon={Wallet} accent="green">
+              <SubBlock title="Cajas en pesos" total={totals.sumaCajasPesos} accent="neutral">
+                {cfg.cajas_pesos.map(c => (
+                  <div key={c.id} className="group flex items-center gap-2 px-2 py-1.5 hover:bg-neutral-900/50 rounded-md">
+                    <span className="flex-1 text-sm text-neutral-200 truncate">{c.name}</span>
+                    <div className="w-32"><NumInput value={mes.cajas_pesos[c.id] || 0} onChange={v => setCajaPesos(c.id, v)} /></div>
+                  </div>
+                ))}
+              </SubBlock>
+              <SubBlock title="Ingresos del mes" total={totals.totIngresosPendientes} accent="green">
+                <SectionFV sectionFijo="ingresos_fijos" sectionVar="ingresos" fijos={cfg.ingresos_fijos} variables={mes.ingresos} mes={mes}
+                  onFijoAdd={i => addFijo('ingresos_fijos', i)} onFijoUpdate={i => updateFijo('ingresos_fijos', i)} onFijoDelete={id => deleteFijo('ingresos_fijos', id)}
+                  onVarAdd={i => addVar('ingresos', i)} onVarUpdate={i => updateVar('ingresos', i)} onVarDelete={id => deleteVar('ingresos', id)}
+                  onTogglePagoFijo={mkToggleFijo('ingresos_fijos', 'ingreso', 'cajas_pesos')} onTogglePagoVar={mkToggleVar('ingresos', 'ingreso', 'cajas_pesos')}
+                  canPay payMode="ingreso" cajas={cfg.cajas_pesos} cajaField="cajas_pesos" placeholder="Ingreso" />
+              </SubBlock>
+              <SubBlock title="Deudores" total={totals.totDeudoresPendientes} accent="neutral">
+                <SectionFV sectionFijo="deudores_fijos" sectionVar="deudores" fijos={cfg.deudores_fijos} variables={mes.deudores} mes={mes}
+                  onFijoAdd={i => addFijo('deudores_fijos', i)} onFijoUpdate={i => updateFijo('deudores_fijos', i)} onFijoDelete={id => deleteFijo('deudores_fijos', id)}
+                  onVarAdd={i => addVar('deudores', i)} onVarUpdate={i => updateVar('deudores', i)} onVarDelete={id => deleteVar('deudores', id)}
+                  onTogglePagoFijo={mkToggleFijo('deudores_fijos', 'ingreso', 'cajas_pesos')} onTogglePagoVar={mkToggleVar('deudores', 'ingreso', 'cajas_pesos')}
+                  canPay payMode="ingreso" cajas={cfg.cajas_pesos} cajaField="cajas_pesos" placeholder="Deudor" />
+              </SubBlock>
+              <SubBlock title="Extras" total={totals.extrasP} accent="neutral">
+                {mes.extras.map(i => (
+                  <ItemRow key={i.id} item={i} section="extras" mes={mes} onUpdate={u => updateVar('extras', u)} onDelete={id => deleteVar('extras', id)}
+                    canPay payMode="ingreso" cajas={cfg.cajas_pesos} cajaField="cajas_pesos"
+                    onTogglePago={cajaId => togglePago('extras', i.id, cajaId, false, 'ingreso', 'cajas_pesos')} />
+                ))}
+                <AddItemForm onAdd={item => addVar('extras', item)} placeholder="Ingreso extra" />
+              </SubBlock>
+            </Block>
+
+            <Block title="Egresos (pesos)" total={totals.totEgresosPesos} icon={ArrowDownRight} accent="red">
+              <SubBlock title="Estructura" total={totals.totEstructuraPendiente} accent="neutral">
+                <SectionFV sectionFijo="estructura_fijos" sectionVar="gastos_estructura" fijos={cfg.estructura_fijos} variables={mes.gastos_estructura} mes={mes}
+                  onFijoAdd={i => addFijo('estructura_fijos', i)} onFijoUpdate={i => updateFijo('estructura_fijos', i)} onFijoDelete={id => deleteFijo('estructura_fijos', id)}
+                  onVarAdd={i => addVar('gastos_estructura', i)} onVarUpdate={i => updateVar('gastos_estructura', i)} onVarDelete={id => deleteVar('gastos_estructura', id)}
+                  onTogglePagoFijo={mkToggleFijo('estructura_fijos', 'egreso', 'cajas_pesos')} onTogglePagoVar={mkToggleVar('gastos_estructura', 'egreso', 'cajas_pesos')}
+                  canPay payMode="egreso" cajas={cfg.cajas_pesos} cajaField="cajas_pesos" placeholder="Gasto" />
+              </SubBlock>
+              <SubBlock title="Tarjetas" total={totals.totTarjetas} accent="orange">
+                {cfg.tarjetas.length === 0 && <div className="text-xs text-neutral-500 p-3 text-center italic">Configurá tus tarjetas en ⚙️</div>}
+                {cfg.tarjetas.map(t => (
+                  <TarjetaCollapsible key={t.id} tarjeta={t} consumosMes={totals.consumosMes.filter(c => c.tarjeta_id === t.id)} currentKey={currentKey}
+                    onAdd={addTarjetaConsumo} onUpdate={updateTarjetaConsumo} onDelete={deleteTarjetaConsumo} />
+                ))}
+              </SubBlock>
+              <SubBlock title="Personal" total={totals.totPersonal} accent="neutral">
+                {mes.gastos_personal.map(i => (
+                  <ItemRow key={i.id} item={i} section="gastos_personal" mes={mes} onUpdate={u => updateVar('gastos_personal', u)} onDelete={id => deleteVar('gastos_personal', id)}
+                    canPay payMode="egreso" cajas={cfg.cajas_pesos} cajaField="cajas_pesos"
+                    onTogglePago={cajaId => togglePago('gastos_personal', i.id, cajaId, false, 'egreso', 'cajas_pesos')} />
+                ))}
+                <AddItemForm onAdd={item => addVar('gastos_personal', item)} placeholder="Gasto personal" />
+              </SubBlock>
+              <SubBlock title="Extras" total={totals.totExtrasGastos} accent="neutral">
+                {mes.gastos_extras.map(i => (
+                  <ItemRow key={i.id} item={i} section="gastos_extras" mes={mes} onUpdate={u => updateVar('gastos_extras', u)} onDelete={id => deleteVar('gastos_extras', id)}
+                    canPay payMode="egreso" cajas={cfg.cajas_pesos} cajaField="cajas_pesos"
+                    onTogglePago={cajaId => togglePago('gastos_extras', i.id, cajaId, false, 'egreso', 'cajas_pesos')} />
+                ))}
+                <AddItemForm onAdd={item => addVar('gastos_extras', item)} placeholder="Gasto extra" />
+              </SubBlock>
+            </Block>
+
+            <Block title="Ahorros (pesos)" subtitle="(se apartan del saldo)" total={totals.totAhorrosPesos} icon={PiggyBank} accent="blue">
+              <SectionFV sectionFijo="ahorros_fijos" sectionVar="ahorros" fijos={cfg.ahorros_fijos} variables={mes.ahorros} mes={mes}
+                onFijoAdd={i => addFijo('ahorros_fijos', i)} onFijoUpdate={i => updateFijo('ahorros_fijos', i)} onFijoDelete={id => deleteFijo('ahorros_fijos', id)}
+                onVarAdd={i => addVar('ahorros', i)} onVarUpdate={i => updateVar('ahorros', i)} onVarDelete={id => deleteVar('ahorros', id)}
+                onTogglePagoFijo={mkToggleFijo('ahorros_fijos', 'egreso', 'cajas_pesos')} onTogglePagoVar={mkToggleVar('ahorros', 'egreso', 'cajas_pesos')}
+                canPay payMode="egreso" cajas={cfg.cajas_pesos} cajaField="cajas_pesos" placeholder="Ahorro" />
+            </Block>
+
+            <Block title="Inversiones / Proyectos" total={totals.totInversiones} icon={TrendingUp} accent="orange">
+              {mes.inversiones.map(i => (
+                <ItemRow key={i.id} item={i} section="inversiones" mes={mes} onUpdate={u => updateVar('inversiones', u)} onDelete={id => deleteVar('inversiones', id)} />
+              ))}
+              <AddItemForm onAdd={item => addVar('inversiones', item)} placeholder="Proyecto / Inversión" />
+            </Block>
+
+            <Block title="Mundo USD" totalLabel={fmtUsd(totals.finalUsd)} icon={CircleDollarSign} accent="green" currency="USD">
+              <SubBlock title="Cajas en dólares" total={totals.sumaCajasDolares} accent="neutral" currency="USD">
+                {cfg.cajas_dolares.map(c => (
+                  <div key={c.id} className="group flex items-center gap-2 px-2 py-1.5 hover:bg-neutral-900/50 rounded-md">
+                    <span className="flex-1 text-sm text-neutral-200 truncate">{c.name}</span>
+                    <div className="w-24"><NumInput value={mes.cajas_dolares[c.id] || 0} onChange={v => setCajaDolares(c.id, v)} /></div>
+                  </div>
+                ))}
+              </SubBlock>
+              <SubBlock title="Ahorro dólares" accent="blue" currency="USD">
+                <AhorroDolaresRow mes={mes} cfg={cfg} dolarValor={cfg.dolar_valor} onChangeMonto={setAhorroDolares} onToggleRealizado={togglearAhorroRealizado} />
+              </SubBlock>
+              <SubBlock title="Egresos en dólares" total={totals.totEgrUsdPendiente} accent="red" currency="USD">
+                <SectionFV sectionFijo="egresos_dolares_fijos" sectionVar="egresos_dolares" fijos={cfg.egresos_dolares_fijos} variables={mes.egresos_dolares} mes={mes}
+                  onFijoAdd={i => addFijo('egresos_dolares_fijos', i)} onFijoUpdate={i => updateFijo('egresos_dolares_fijos', i)} onFijoDelete={id => deleteFijo('egresos_dolares_fijos', id)}
+                  onVarAdd={i => addVar('egresos_dolares', i)} onVarUpdate={i => updateVar('egresos_dolares', i)} onVarDelete={id => deleteVar('egresos_dolares', id)}
+                  onTogglePagoFijo={mkToggleFijo('egresos_dolares_fijos', 'egreso', 'cajas_dolares')} onTogglePagoVar={mkToggleVar('egresos_dolares', 'egreso', 'cajas_dolares')}
+                  canPay payMode="egreso" cajas={cfg.cajas_dolares} cajaField="cajas_dolares" placeholder="Gasto USD" currency="USD" />
+              </SubBlock>
+            </Block>
+
+            <Block title="Ajustes de cierre (pesos)" total={totals.totAjustes} icon={Check} accent="white">
+              {mes.ajustes_ocasionales.map(i => (
+                <ItemRow key={i.id} item={i} section="ajustes_ocasionales" mes={mes} onUpdate={u => updateVar('ajustes_ocasionales', u)} onDelete={id => deleteVar('ajustes_ocasionales', id)} />
+              ))}
+              <AddItemForm onAdd={item => addVar('ajustes_ocasionales', item)} placeholder="Ajuste (− para restar)" />
+            </Block>
+
+            <div className="flex justify-center">
+              <Btn variant="ghost" onClick={copyFromPrevMonth}><Copy size={14} /> Copiar saldos del mes anterior</Btn>
+            </div>
+
+            <div className="text-center text-xs text-neutral-600 pt-4">
+              Palmito Finanzas · sincronizado · {user.email}
+            </div>
+          </div>
+
+          <ConfigModal open={configOpen} onClose={() => setConfigOpen(false)} state={state} onUpdate={updateState} />
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
